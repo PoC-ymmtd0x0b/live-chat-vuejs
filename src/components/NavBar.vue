@@ -1,14 +1,29 @@
 <template>
   <nav>
     <div>
-      <p>こんにちは、XXさん</p>
-      <p class="email">現在、...@...comでログインです</p>
+      <p>
+        こんにちは、<span class="name">{{ name }}</span
+        >さん
+      </p>
+      <p class="email">
+        現在、<span>{{ email }}</span
+        >でログインです
+      </p>
     </div>
     <button>ログアウト</button>
   </nav>
 </template>
 
-<script></script>
+<script>
+export default {
+  data() {
+    return {
+      name: window.localStorage.getItem('name'),
+      email: window.localStorage.getItem('uid'),
+    }
+  },
+}
+</script>
 
 <style scoped>
 nav {
