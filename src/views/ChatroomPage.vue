@@ -1,7 +1,11 @@
 <template>
   <div class="container">
     <NavBar />
-    <ChatWindow @connectCable="connectCable" :messages="formatttedMessages" />
+    <ChatWindow
+      @connectCable="connectCable"
+      :messages="formatttedMessages"
+      ref="chatWindow"
+    />
     <NewChatForm @connectCable="connectCable" />
   </div>
 </template>
@@ -66,10 +70,14 @@ export default {
     const cable = ActionCable.createConsumer('ws://localhost:3000/cable')
     this.messageChannel = cable.subscriptions.create('RoomChannel', {
       connected: () => {
-        this.getMessages()
+        this.getMessages().then(() => {
+          this.$refs.chatWindow.scrollToBottom()
+        })
       },
       received: () => {
-        this.getMessages()
+        this.getMessages().then(() => {
+          this.$refs.chatWindow.scrollToBottom()
+        })
       },
     })
   },

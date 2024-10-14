@@ -1,6 +1,6 @@
 <template>
   <div class="chat-window">
-    <div v-if="messages" class="messages">
+    <div v-if="messages" class="messages" ref="messages">
       <ul v-for="message in messages" :key="message.id">
         <li
           :class="{
@@ -91,6 +91,10 @@ export default {
       } catch (err) {
         console.log(err)
       }
+    },
+    scrollToBottom() {
+      const element = this.$refs.messages
+      element.scrollTop = element.scrollHeight
     },
   },
 }
