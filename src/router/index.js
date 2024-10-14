@@ -26,6 +26,25 @@ const requireAuth = async (to, from, next) => {
   }
 }
 
+const noRerquireAuth = async (to, from, next) => {
+  const uid = window.localStorage.getItem('uid')
+  const client = window.localStorage.getItem('client')
+  const accessToken = window.localStorage.getItem('access-token')
+
+  if (!uid || !client || !accessToken) {
+    next()
+    return
+  }
+
+  await validate()
+
+  if (!error.value) {
+    next({ name: 'ChatroomPage' })
+  } else {
+    next()
+  }
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -33,6 +52,7 @@ const router = createRouter({
       path: '/',
       name: 'WelcomePage',
       component: WelcomePage,
+      beforeEnter: noRerquireAuth,
     },
     {
       path: '/chatroom',
