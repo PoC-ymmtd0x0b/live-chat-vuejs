@@ -9,7 +9,7 @@
           }"
         >
           <span class="name">{{ message.name }}</span>
-          <div class="message" @dblclick="createLike(message.id)">
+          <div class="message" @dblclick="handleLike(message)">
             {{ message.content }}
             <div v-if="message.likes.length" class="heart-container">
               <font-awesome-icon icon="heart" class="heart" />
@@ -35,6 +35,16 @@ export default {
     }
   },
   methods: {
+    handleLike(message) {
+      for (let i = 0; i < message.likes.length; i++) {
+        const like = message.likes[i]
+        if (like.email === this.uid) {
+          this.deleteLike(like.id)
+          return
+        }
+      }
+      this.createLike(message.id)
+    },
     async createLike(messageId) {
       try {
         const res = await axios.post(
@@ -56,6 +66,28 @@ export default {
         this.$emit('connectCable')
 
         return res
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    async deleteLike(likeId) {
+      try {
+        const res = await axios.delete(
+          `http://localhost:3000/likes/${likeId}`,
+          {
+            headers: {
+              uid: this.uid,
+              'access-token': window.localStorage.getItem('access-token'),
+              client: window.localStorage.getItem('client'),
+            },
+          },
+        )
+
+        if (!res) {
+          throw new Error('いいねを削除できませんでした')
+        }
+
+        this.$emit('connectCable')
       } catch (err) {
         console.log(err)
       }
