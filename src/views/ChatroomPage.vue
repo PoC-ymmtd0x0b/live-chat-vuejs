@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <NavBar />
-    <ChatWindow @connectCable="connectCable" :messages="messages" />
+    <ChatWindow @connectCable="connectCable" :messages="formatttedMessages" />
     <NewChatForm @connectCable="connectCable" />
   </div>
 </template>
@@ -12,6 +12,8 @@ import ChatWindow from '@/components/ChatWindow.vue'
 import NewChatForm from '@/components/NewChatForm.vue'
 import axios from 'axios'
 import ActionCable from 'actioncable'
+import { formatDistanceToNow } from 'date-fns'
+import { ja } from 'date-fns/locale'
 
 export default {
   components: { NavBar, ChatWindow, NewChatForm },
@@ -19,6 +21,19 @@ export default {
     return {
       messages: [],
     }
+  },
+  computed: {
+    formatttedMessages() {
+      if (!this.messages.length) {
+        return []
+      }
+      return this.messages.map(message => {
+        let time = formatDistanceToNow(new Date(message.created_at), {
+          locale: ja,
+        })
+        return { ...message, created_at: time }
+      })
+    },
   },
   methods: {
     async getMessages() {
